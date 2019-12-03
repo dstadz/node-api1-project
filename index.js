@@ -41,7 +41,8 @@ server.get('/api/users/:id', (req, res) => {
   const id = req.params.id
   db.findById(id)
   .then( user => {
-    res.status(200).json(user)
+    if(user) res.status(200).json(user)
+    else res.status(404).json({errorMessage:'we couldnt find your user in our space'})
   })
   .catch(err => {
     console.log('you done goofed with:', err)
@@ -78,24 +79,22 @@ server.put('/api/users/:id', (req, res) => {
     if(users) res.status(200).json(users)
     else res.status(404).json({message:"no user with that id found"})
   })
-  if(!(user.name && user.bio)) res.status(400).json({ errorMessage: "Please provide name and bio for the user." })
-  else {
-
-  }
-    db.update(id, user)
-    .then(user => {
-      server.put('/api/users/:id',(req,res) => {
-        console.log()
+  // db.update(id, user)
+  // .then(user => {
+    //   server.put('/api/users/:id',(req,res) => {
+      //     console.log()
+      //   })
+      // })
+      
+      .catch(err => {
+        console.log('you done goofed with:', err)
+        res
+        .status(500)
+        .json({errorMessage: 'error getting list of hubs from database'})
       })
+  if(!user.name || !user.bio) res.status(400).json({ errorMessage: "Please provide name and bio for the user." })
+  else {}
     })
-  }
-  .catch(err => {
-    console.log('you done goofed with:', err)
-    res
-    .status(500)
-    .json({errorMessage: 'error getting list of hubs from database'})
-  })
-})
 
 server.listen(port, () => {
   console.log(`\n API running on port ${port} \n`)
